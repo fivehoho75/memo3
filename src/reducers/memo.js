@@ -67,14 +67,14 @@ export default function memo(state, action) {
                     return update(state, {
                         list: {
                             status: { $set: 'SUCCESS' },
-                            data: { $unshift: action.data },
+                            data: { $unshift: action.data }, // $unshift 배열앞에 추가
                         }
                     });
                 } else {
                     return update(state, {
                         list: {
                             status: { $set: 'SUCCESS' },
-                            data: { $push: action.data },
+                            data: { $push: action.data }, // $push 배열뒤에 추가
                             isLast: { $set: action.data.length < 6 }
                         }
                     });    

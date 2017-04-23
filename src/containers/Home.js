@@ -5,8 +5,7 @@ import {
     memoPostRequest, 
     memoListRequest, 
     memoEditRequest,
-    memoRemoveRequest,
-    memoRemoveFromData } from '../actions/memo';
+    memoRemoveRequest } from '../actions/memo';
 
 class Home extends Component {
     
@@ -18,6 +17,7 @@ class Home extends Component {
 
         this.handlePost = this.handlePost.bind(this);
         this.loadNewMemo = this.loadNewMemo.bind(this);
+        this.loadOldMemo = this.loadOldMemo.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
         this.handleRemove = this.handleRemove.bind(this);
     }
@@ -58,7 +58,7 @@ class Home extends Component {
             // WHEN HEIGHT UNDER SCROLLBOTTOM IS LESS THEN 250
             if ($(document).height() - $(window).height() - $(window).scrollTop() < 250) {
                 if(!this.state.loadingState){
-                    console.log("LOAD NOW");
+                    this.loadOldMemo();
                     this.setState({
                         loadingState: true
                     });
@@ -81,7 +81,6 @@ class Home extends Component {
     }
 
     loadNewMemo() {
-         //const Materialize = window.Materialize;
         // CANCEL IF THERE IS A PENDING REQUEST
         if(this.props.listStatus === 'WAITING') 
             return new Promise((resolve, reject)=> {
@@ -91,16 +90,30 @@ class Home extends Component {
         // IF PAGE IS EMPTY, DO THE INITIAL LOADING
         if(this.props.memoData.length === 0 )
             return this.props.memoListRequest(true);
-            
+
+        return this.props.memoListRequest(false, 'new', this.props.memoData[0]._id);
+    }
+
+    loadOldMemo() {
+        const Materialize = window.Materialize;
+        // CANCEL IF USER IS READING THE LAST PAGE
+        if(this.props.isLast) {
+            return new Promise(
+                (resolve, reject)=> {
+                    resolve();
+                }
+            );
+        }
+        
         // GET ID OF THE MEMO AT THE BOTTOM
         let lastId = this.props.memoData[this.props.memoData.length - 1]._id;
         
         // START REQUEST
         return this.props.memoListRequest(false, 'old', lastId).then(() => {
             // IF IT IS LAST PAGE, NOTIFY
-            /*if(this.props.isLast) {
+            if(this.props.isLast) {
                 Materialize.toast('You are reading the last page', 2000);
-            }*/
+            }
         });
     }
 
@@ -190,7 +203,7 @@ class Home extends Component {
     handleRemove(id, index) {
         const $ = window.$;
         const Materialize = window.Materialize;
-        
+
         this.props.memoRemoveRequest(id, index).then(() => {
             if(this.props.removeStatus.status==="SUCCESS") {
                 // LOAD MORE MEMO IF THERE IS NO SCROLLBAR
