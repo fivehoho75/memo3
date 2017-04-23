@@ -56,7 +56,7 @@ class Authentication extends Component {
     }
 
     handleKeyPress(e) {
-        if(e.charCode==13) {
+        if(e.charCode === 13) {
             if(this.props.mode) {
                 this.handleLogin();
             } else {

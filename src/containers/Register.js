@@ -17,7 +17,7 @@ class Register extends Component {
 
         return this.props.registerRequest(id, pw).then(
             () => {
-                if ( this.props.status == "SUCCESS") {
+                if ( this.props.status === "SUCCESS") {
                     Materialize.toast('Success! Please log in.', 2000);
                     this.props.history.push('/login');
                     return true;
