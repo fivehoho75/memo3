@@ -4,7 +4,13 @@ import PropTypes from 'prop-types';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 class MemoList extends Component {
+    shouldComponentUpdate(nextProps, nextState) {
+        let update = JSON.stringify(this.props) !== JSON.stringify(nextProps);
+        return update;
+    }
+
     render() {
+        //console.log('MemoList render method executed');
         const mapToComponents = data => {
             return data.map((memo, i) => {
                 return (
@@ -14,7 +20,9 @@ class MemoList extends Component {
                         key={memo._id}
                         index={i}
                         onEdit={this.props.onEdit}
-                        onRemove={this.props.onRemove}/>
+                        onRemove={this.props.onRemove}
+                        onStar={this.props.onStar}
+                        currentUser={this.props.currentUser}/>
                 );
             });
         };
@@ -34,7 +42,8 @@ MemoList.propTypes = {
     data: PropTypes.array,
     currentUser: PropTypes.string,
     onEdit: PropTypes.func,
-    onRemove: PropTypes.func
+    onRemove: PropTypes.func,
+    onStar: PropTypes.func
 };
 
 MemoList.defaultProps = {
@@ -45,6 +54,9 @@ MemoList.defaultProps = {
     },
     onRemove: (id, index) => { 
         console.error('remove function not defined'); 
+    },
+    onStar: (id, index) => {
+        console.error('star function not defined');
     }
 };
 
